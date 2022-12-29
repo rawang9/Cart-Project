@@ -6,26 +6,26 @@ class CartItem extends React.Component {
     // this.increaseQuant = this.increaseQuant.bind(this);
   }
   // increaseQuant = () => {
-    // console.log("this", this.state);
-    //set state form 1 when we just want to change.
-    // this.setState({qty: this.state.qty+1},()=>{console.log("callback")})
-    //set state form 2 when we need recent data;
-    //set state is Asyncronus call
-    //by using Promises setTState work as Syncronus  call.
-    // this.setState(
-    //   (prevState) => {
-    //     return { qty: prevState.qty + 1 };
-    //   },
-    //   () => {
-    //     console.log("Call back funtion");
-    //   }
-    // ); //call back funtion
-    //batching -> when we call setState form 1, 3 times then it
-    //swallow them to one songe set state by taking tha last one.
-    //solutiin use form 2
-    // this.setState({qty: this.state.qty+1});
-    // this.setState({qty: this.state.qty+5});
-    // this.setState({qty: this.state.qty+10});//only this will be called
+  // console.log("this", this.state);
+  //set state form 1 when we just want to change.
+  // this.setState({qty: this.state.qty+1},()=>{console.log("callback")})
+  //set state form 2 when we need recent data;
+  //set state is Asyncronus call
+  //by using Promises setTState work as Syncronus  call.
+  // this.setState(
+  //   (prevState) => {
+  //     return { qty: prevState.qty + 1 };
+  //   },
+  //   () => {
+  //     console.log("Call back funtion");
+  //   }
+  // ); //call back funtion
+  //batching -> when we call setState form 1, 3 times then it
+  //swallow them to one songe set state by taking tha last one.
+  //solutiin use form 2
+  // this.setState({qty: this.state.qty+1});
+  // this.setState({qty: this.state.qty+5});
+  // this.setState({qty: this.state.qty+10});//only this will be called
   // };
   // decreaseQuant = () => {
   //   console.log("hear");
@@ -38,6 +38,7 @@ class CartItem extends React.Component {
   // };
   render() {
     const { price, title, qty } = this.props.product;
+    const { product, increaseQuant, decreaseQuant, deleteItem } = this.props;
     return (
       <div className="cart-item">
         <div className="left-block">
@@ -55,18 +56,19 @@ class CartItem extends React.Component {
             <img
               alt="increase"
               className="action-icons"
-              onClick={() => this.props.increaseQuant(this.props.product)}
+              onClick={() => increaseQuant(product)}
               src="https://cdn-icons-png.flaticon.com/512/992/992651.png"
             />
             <img
               alt="decrease"
               className="action-icons"
-              onClick={() => this.props.decreaseQuant(this.props.product)}
+              onClick={() => decreaseQuant(product)}
               src="https://cdn-icons-png.flaticon.com/512/992/992683.png"
             />
             <img
               alt="delete"
               className="action-icons"
+              onClick={() => deleteItem(product.id)}
               src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png"
             />
           </div>
