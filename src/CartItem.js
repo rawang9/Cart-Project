@@ -1,10 +1,11 @@
 import React from "react";
-class CartItem extends React.Component {
-  constructor() {
-    super();
-    this.state = { price: 999, title: "Mobile phone", qty: 1, img: "" };
-    // this.increaseQuant = this.increaseQuant.bind(this);
-  }
+// class CartItem extends React.Component {
+  const CartItem = (props) =>{
+  // constructor() {
+  //   super();
+  //   this.state = { price: 999, title: "Mobile phone", qty: 1, img: "" };
+  //   // this.increaseQuant = this.increaseQuant.bind(this);
+  // }
   // increaseQuant = () => {
   // console.log("this", this.state);
   //set state form 1 when we just want to change.
@@ -35,15 +36,16 @@ class CartItem extends React.Component {
   //     }
   //     return { qty: prevState.qty - 1 };
   //   });
-  // };
-  render() {
-    const { price, title, qty } = this.props.product;
-    const { product, increaseQuant, decreaseQuant, deleteItem } = this.props;
+  // // };
+  // render() {
+    const { price, title, qty,img } = props.product;
+    const { product, increaseQuant, decreaseQuant, deleteItem } = props;
     return (
       <div className="cart-item">
         <div className="left-block">
           <img
             alt=""
+            src = {img}
             style={styles.image}
             onMouseOver={() => console.log("above image")}
           />
@@ -75,7 +77,7 @@ class CartItem extends React.Component {
         </div>
       </div>
     );
-  }
+  
 }
 const styles = {
   image: {
