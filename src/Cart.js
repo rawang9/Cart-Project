@@ -29,6 +29,7 @@ class Cart extends React.Component {
   };
   render() {
     const { products } = this.state;
+    console.log("hello");
     return (
       <div className="cart">
         {products.map((product) => {
