@@ -4,6 +4,7 @@ import React from "react";
 
 class App extends React.Component {
   constructor() {
+    console.log("Constructed");
     super();
     this.state = {
       products: [
@@ -31,6 +32,16 @@ class App extends React.Component {
       ],
     };
   }
+  // componentDidMount(){
+  //   console.log("call first time only one time to fetch api");
+  // };
+  // componentDidUpdate(prevProps,prevState){
+  //   console.log("whenever change occur in this.state this will be called with 2 props",prevState);
+  // };
+  // componentWillUnmount(){
+  //   console.log("when componenet is distroyed use it to free up the memory")
+  // };
+  //binding class method so that we can use together.(method must return this;) A.getPrice().intrest().
   //we can pass anything to pass,funtion,data,jsx,component;
   increaseQuant = (product) => {
     const { products } = this.state;
@@ -67,6 +78,7 @@ class App extends React.Component {
     return total;
   }
   render() {
+    console.log("render");
     const { products } = this.state;
     return (
       <div>
