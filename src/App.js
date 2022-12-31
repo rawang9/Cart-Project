@@ -1,40 +1,44 @@
 import Cart from "./Cart";
 import Navbar from "./Navbar";
 import React from "react";
-
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 class App extends React.Component {
   constructor() {
-    console.log("Constructed");
     super();
     this.state = {
-      products: [
-        {
-          price: 99,
-          title: "Watch",
-          qty: 1,
-          img: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
-          id: 1,
-        },
-        {
-          price: 999,
-          title: "Mobile phone",
-          qty: 10,
-          img: "https://images.unsplash.com/photo-1567581935884-3349723552ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bW9iaWxlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=200&q=60",
-          id: 2,
-        },
-        {
-          price: 999,
-          title: "Laptop",
-          qty: 4,
-          img: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8bGFwdG9wfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=200&q=60",
-          id: 3,
-        },
-      ],
+      products: [],
+      loading: true,
     };
   }
-  // componentDidMount(){
-  //   console.log("call first time only one time to fetch api");
-  // };
+  componentDidMount() {
+    // firebase
+    //   .firestore()
+    //   .collection("products")
+    //   .get()
+    //   .then((snapshot) => {
+    //     const products = snapshot.docs.map((doc) => {
+    //       const data = doc.data();
+    //       data["id"] = doc.id;
+    //       return data;
+    //     });
+    //     this.setState({ products, loading: false });
+    //   });
+    firebase
+      .firestore()
+      .collection("products")
+      // .where('price','==',999)//condion while fetching data
+      // .where('title','==','Laptop')//codition
+      .orderBy('price','desc')
+      .onSnapshot((snapshot) => {
+        const products = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          data["id"] = doc.id;
+          return data;
+        });
+        this.setState({ products, loading: false });
+      });
+  }
   // componentDidUpdate(prevProps,prevState){
   //   console.log("whenever change occur in this.state this will be called with 2 props",prevState);
   // };
@@ -46,22 +50,47 @@ class App extends React.Component {
   increaseQuant = (product) => {
     const { products } = this.state;
     const index = products.indexOf(product);
-    products[index].qty++;
-    this.setState({ products });
+    // products[index].qty++;
+    // this.setState({ products });
     //console.log(products[index].qty);
+    const docRef = firebase
+      .firestore()
+      .collection("products")
+      .doc(products[index].id);
+    docRef
+      .update({ qty: products[index].qty + 1 })
+      .then(() => {
+        console.log("increses");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   decreaseQuant = (product) => {
     if (product.qty === 1) return this.deleteItem(product.id);
     const { products } = this.state;
     const index = products.indexOf(product);
-    products[index].qty--;
-    this.setState({ products });
-    //console.log(products[index].qty);
+    // products[index].qty--;
+    // this.setState({ products });
+    const docRef = firebase
+      .firestore()
+      .collection("products")
+      .doc(products[index].id);
+    docRef
+      .update({ qty: products[index].qty - 1 })
+      .then(() => console.log("Decressed"))
+      .catch((error) => console.log("error ", error));
   };
   deleteItem = (id) => {
-    const { products } = this.state;
-    const remain = products.filter((item) => item.id !== id);
-    this.setState({ products: remain });
+    // const { products } = this.state;
+    console.log(id);
+    // const remain = products.filter((item) => item.id !== id);
+    // this.setState({ products: remain });
+    const docRef = firebase.firestore().collection("products").doc(id);
+    docRef
+      .delete()
+      .then(() => console.log("deleted"))
+      .catch((err) => console.log(err));
   };
   getCartCount = () => {
     const { products } = this.state;
@@ -71,25 +100,49 @@ class App extends React.Component {
     });
     return count;
   };
-  getTotal = ()=>{
-    const {products} = this.state;
-    let total = 0;
-    products.forEach((item)=> {total+=(item.price * item.qty)})
-    return total;
-  }
-  render() {
-    console.log("render");
+  getTotal = () => {
     const { products } = this.state;
+    let total = 0;
+    products.forEach((item) => {
+      total += item.price * item.qty;
+    });
+    return total;
+  };
+  addProduct = () => {
+    firebase
+      .firestore()
+      .collection("products")
+      .add({
+        title: "Washing Machine",
+        img: "https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.lg.com%2Fin%2Fimages%2Fwashing-machines%2Fmd07540744%2Fgallery%2FFHM1207BDL-Washing-Machines-Front-View-D-01.jpg&imgrefurl=https%3A%2F%2Fwww.lg.com%2Fin%2Fwashing-machines%2Flg-fhm1207bdl&tbnid=LvjAJ_aQ8ZHo3M&vet=12ahUKEwjay62tl6P8AhW9j9gFHX_aCxgQMygBegUIARDjAQ..i&docid=B2yU6AZybQD59M&w=1100&h=730&q=washing%20machine&ved=2ahUKEwjay62tl6P8AhW9j9gFHX_aCxgQMygBegUIARDjAQ",
+        qty: 12,
+        price: 1001,
+      })
+      .then((docRef) => {
+        console.log("Product added", docRef);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
+  };
+  render() {
+    const { products, loading } = this.state;
     return (
-      <div>
+      <div className="App">
         <Navbar count={this.getCartCount()} />
+        {/* <button onClick={this.addProduct} style={{ padding: 20, fontSize: 20 }}>
+          Add New Product
+        </button> */}
         <Cart
           products={products}
           increaseQuant={this.increaseQuant}
           decreaseQuant={this.decreaseQuant}
           deleteItem={this.deleteItem}
         />
-      <div style = {{padding:10,fontSize:30}}>Total : {this.getTotal()}</div>
+        {loading && <h1>Loading Data...</h1>}
+        <div style={{ padding: 10, fontSize: 30 }}>
+          Total : {this.getTotal()}
+        </div>
       </div>
     );
   }
